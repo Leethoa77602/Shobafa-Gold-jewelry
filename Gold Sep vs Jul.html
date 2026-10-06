@@ -1,0 +1,569 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+
+<title>Gold Sep vs Jul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#15140f; --ink-2:#56544c; --ink-3:#8a877c; --line:#e4e1d8; --grid:#eeece6;
+  --gold:#a8791a; --cur:#2a78d6; --sg:#2a78d6; --jw:#eb6834; --prior:#b9b6ac;
+  --good:#0a8a0a; --bad:#d03b3b; --tab:#efede6; --tab-on:#15140f; --tab-on-ink:#ffffff;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#141412; --surface:#1c1c1a; --ink:#f4f3ee; --ink-2:#c3c2b7; --ink-3:#8f8d84; --line:#33322e; --grid:#2a2a27;
+    --gold:#d9a94a; --cur:#3987e5; --sg:#3987e5; --jw:#d95926; --prior:#5e5c55;
+    --good:#4cc24c; --bad:#e66767; --tab:#262623; --tab-on:#f4f3ee; --tab-on-ink:#141412;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141412; --surface:#1c1c1a; --ink:#f4f3ee; --ink-2:#c3c2b7; --ink-3:#8f8d84; --line:#33322e; --grid:#2a2a27;
+  --gold:#d9a94a; --cur:#3987e5; --sg:#3987e5; --jw:#d95926; --prior:#5e5c55;
+  --good:#4cc24c; --bad:#e66767; --tab:#262623; --tab-on:#f4f3ee; --tab-on-ink:#141412;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 "IBM Plex Sans",system-ui,sans-serif;padding-inline:16px;padding-block:28px 56px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:36px}
+.wrap[hidden]{display:none}
+header{display:flex;flex-direction:column;gap:6px;border-bottom:2px solid var(--gold);padding-bottom:16px}
+.eyebrow{font:500 11px/1 "IBM Plex Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+h1{font:700 clamp(24px,4vw,34px)/1.15 Archivo,system-ui,sans-serif;margin:0;text-wrap:balance}
+h2{font:700 18px/1.3 Archivo,system-ui,sans-serif;margin:0;text-wrap:balance}
+h3{font:600 12px/1.2 "IBM Plex Mono",monospace;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2);margin:0;display:flex;align-items:center;gap:8px}
+h3 .sw{width:10px;height:10px;border-radius:2px}
+.sub,.takeaway{color:var(--ink-2);margin:0;max-width:80ch}
+section{display:flex;flex-direction:column;gap:14px}
+.group{display:flex;flex-direction:column;gap:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.kpi .l{font:500 11px/1.2 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.kpi .v{font:600 24px/1.2 "IBM Plex Sans",sans-serif;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.up{color:var(--good)} .down{color:var(--bad)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.seg{display:inline-flex;background:var(--tab);border-radius:8px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{font:500 13px/1 "IBM Plex Sans",sans-serif;border:0;background:transparent;color:var(--ink-2);padding:7px 12px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--tab-on);color:var(--tab-on-ink)}
+.seg button:focus-visible{outline:2px solid var(--cur);outline-offset:1px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.chart{position:relative;height:300px;width:100%}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;min-width:640px}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{font:500 11px/1.2 "IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3)}
+tbody tr:last-child td{border-bottom:none}
+td .dates{color:var(--ink-3);font-size:12px;margin-left:6px}
+.mult{display:inline-block;min-width:44px;padding:1px 7px;border-radius:10px;background:var(--tab);font-weight:500}
+.foot{font-size:12px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:14px}
+tr.hl td{background:var(--tab);font-weight:600}
+.topbar{max-width:1120px;margin:0 auto 20px;display:flex}
+.report{display:flex;flex-direction:column;gap:28px}
+.report h2{border-bottom:1px solid var(--line);padding-bottom:8px}
+.report h3{color:var(--ink);font:600 15px/1.3 Archivo,system-ui,sans-serif;text-transform:none;letter-spacing:0;display:block}
+.report p{margin:0;color:var(--ink-2);max-width:80ch}
+.report ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--ink-2);max-width:80ch}
+.report ul li::marker{color:var(--ink-3)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.stat-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.stat-card .l{font:500 11px/1.2 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.stat-card .v{font-size:13px;color:var(--ink);line-height:1.5}
+.callout{background:var(--tab);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--ink-2)}
+.pri{display:inline-block;font:600 10px/1 "IBM Plex Mono",monospace;letter-spacing:.04em;padding:3px 6px;border-radius:4px;margin-right:8px;vertical-align:1px}
+.pri.p0{background:rgba(208,59,59,.15);color:var(--bad)}
+.pri.p1{background:rgba(168,121,26,.18);color:var(--gold)}
+.status{display:inline-block;font:500 11px/1 "IBM Plex Sans",sans-serif;padding:3px 8px;border-radius:10px;background:var(--tab);color:var(--ink-2);white-space:nowrap}
+.status.done{background:rgba(10,138,10,.15);color:var(--good)}
+.status.progress{background:rgba(42,120,214,.15);color:var(--cur)}
+.appendix{border:1px dashed var(--line);border-radius:8px;padding:16px;color:var(--ink-3);font-size:13px}
+.tbl.left td,.tbl.left th{text-align:left;white-space:normal}
+.tbl.left table{min-width:900px}
+</style>
+
+<div class="topbar"><div class="seg" role="tablist" aria-label="View" id="view_seg"></div></div>
+
+<div class="wrap" id="tab_dashboard">
+<header>
+  <div class="eyebrow" id="eyebrow"></div>
+  <h1 id="title"></h1>
+  <p class="sub" id="n_headline"></p>
+  <div class="controls" style="margin-top:4px">
+    <span style="font:500 11px/1 &quot;IBM Plex Mono&quot;,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)">Compare against</span>
+    <div class="seg" role="group" aria-label="Base period" id="base_seg"></div>
+  </div>
+</header>
+
+<section>
+  <h2>Total gold</h2>
+  <div class="kpis" id="k_total"></div>
+</section>
+
+<section>
+  <h2>By product type</h2>
+  <p class="takeaway" id="n_product"></p>
+  <div class="group"><h3><i class="sw" style="background:var(--sg)"></i>Saving gold</h3><div class="kpis" id="k_sg"></div></div>
+  <div class="group"><h3><i class="sw" style="background:var(--jw)"></i>Jewelry</h3><div class="kpis" id="k_jw"></div></div>
+</section>
+
+<section>
+  <h2>By brand</h2>
+  <p class="takeaway" id="n_brand"></p>
+  <div class="group"><h3>BTMH · Bảo Tín Mạnh Hải</h3><div class="kpis" id="k_btmh"></div></div>
+  <div class="group"><h3>HT · Huy Thanh Jewelry</h3><div class="kpis" id="k_ht"></div></div>
+</section>
+
+<section>
+  <h2>By day type</h2>
+  <p class="takeaway" id="n_daytype"></p>
+  <div class="panel">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Segment" id="dt_seg"></div>
+      <div class="seg" role="group" aria-label="Metric" id="dt_met"></div>
+    </div>
+    <div class="legend"><span><i class="sw" style="background:var(--prior)"></i><span id="lg_base"></span></span><span><i class="sw" style="background:var(--cur)"></i><span id="lg_cur"></span></span></div>
+    <div class="chart"><canvas id="c_dt"></canvas></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Day type</th><th>Days</th><th id="th_b"></th><th id="th_c"></th><th>Δ</th><th id="th_mb"></th><th id="th_mc"></th></tr></thead>
+      <tbody id="dt_tbl"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section>
+  <h2>Jewelry voucher change — since 25 Sep</h2>
+  <p class="takeaway" id="n_voucher"></p>
+  <div class="panel">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Entity" id="vou_seg"></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Period (BAU days only)</th><th>Days</th><th>Orders/day</th><th>GMV/day</th><th>NMV/day</th><th>G2N</th><th>PC2/day</th><th>PC2 % Net COGS</th></tr></thead>
+      <tbody id="vou_tbl"></tbody>
+    </table></div>
+    <p class="sub" style="font-size:12px">Segments follow the sheet's "By special event, BAU only (for Jewelry)" columns. The 25–28 Sep row is 3 days of data — an early read, not a stable trend.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Week on week, BAU days only</h2>
+  <p class="takeaway" id="n_wow"></p>
+  <div class="panel">
+    <div class="controls"><div class="seg" role="group" aria-label="Metric" id="wow_met"></div></div>
+    <div class="legend"><span><i class="sw" style="background:var(--sg)"></i>Saving gold</span><span><i class="sw" style="background:var(--jw)"></i>Jewelry</span><span style="color:var(--ink-3)">Hollow points: partial week · dashed line: 8/8 fee change</span></div>
+    <div class="chart"><canvas id="c_wow"></canvas></div>
+  </div>
+</section>
+
+<div class="foot" id="foot"></div>
+</div>
+
+<div class="wrap" id="tab_report" hidden>
+<header>
+  <div class="eyebrow">SHOBAFA · Gold category · management report</div>
+  <h1 id="report_title"></h1>
+  <p class="sub" id="report_summary"></p>
+</header>
+
+<section class="report">
+
+<div class="group">
+<h2>1. Overall Gold Performance</h2>
+<p>ADG has improved compared to Aug but still has a gap vs. projection, while PC2 is under control. Both are mainly driven by Saving Gold performance.</p>
+<h3>Table 1 · Total Gold categories performance</h3>
+<div class="stat-grid" id="table1_stats"></div>
+
+<h3 style="margin-top:6px">Brand split — Before vs current (after 8/8 fee change)</h3>
+<p class="sub" style="font-size:12px">From the "Performance (Before vs After)" tab, live per refresh — see note below the list for a data-quality caveat and source link.</p>
+<ul id="brand_perf"></ul>
+</div>
+
+<div class="group">
+<h2>1.1 Saving Gold</h2>
+<p>ADG improved significantly MoM, driven by HT's more competitive pricing, though it still remains below projection. PC2 outperformed the proposal, as lower-than-expected txn fee and card rebate offset the higher-than-expected voucher CIR.</p>
+<h3>SHP Performance — Table 2 · Saving Gold performance</h3>
+<div class="stat-grid" id="table2_stats"></div>
+
+<h3>Assortment & Pricing</h3>
+<p><b>New assortment — BTMH:</b></p>
+<ul>
+  <li>0.3 chỉ product: on hold while the Product team revises the E-commerce product line. No launch date yet.</li>
+  <li>New 0.1 chỉ products: 2 SKUs for baby launch on 25 Sep, 1 SKU for wedding gift on 27 Sep. Listing prices will match the Saving Gold products currently listed on Shopee.</li>
+  <li>Plain gold ring: not yet approved by the BOD because the Ecom team cannot commit to sales volume. The E-commerce team is following up and will share an update.</li>
+</ul>
+<p style="margin-top:4px"><b>Price competitiveness</b> <span style="color:var(--ink-3);font-size:12px">· computed live from the Price Check sheet, latest check per brand</span></p>
+<ul id="pc_sg"></ul>
+</div>
+
+<div class="group">
+<h2>1.2 Gold Jewelry</h2>
+<p>Both topline and PC2 are under expectation, mainly impacted by voucher optimization and high txn fee (4.2% vs. 3.2% projected — BI checking). Meanwhile, TTS has increased its voucher spending, which is a more competitive scheme for some sellers (BTMH, TVMV).</p>
+<div class="callout">Soft alignment to maintain PC2 neutral at 0% from 25 Sep (aligned by Cluster Head x Management team).</div>
+<h3>SHP Performance — Table 3 · Gold Jewelry performance</h3>
+<div class="stat-grid" id="table3_stats"></div>
+
+<h3>Assortment & Pricing — BTMH</h3>
+<p><b>New assortment:</b> ~45 new SKUs planned across two online-exclusive collections (Shopee, TikTok Shop and website), with the same prices across platforms. Expected prices: bracelets ~VND 4M, rings ~VND 2.2M, pendant necklaces ~VND 6M, earrings ~VND 1.5–1.9M.</p>
+<ul>
+  <li>7 Oct: first collection, floral theme, for the 20 Oct occasion.</li>
+  <li>20 Oct: second collection, geometric theme.</li>
+</ul>
+<p style="margin-top:4px"><b>Price competitiveness</b> <span style="color:var(--ink-3);font-size:12px">· computed live from the Price Check sheet, latest check per brand</span> — product selection: top 3 SHP products vs. TTS, and top 3 TTS products vs. SHP, across BTMH, HT, Kim Phú Thái and Tiệm Vàng Minh Vàng.</p>
+<ul id="pc_jw"></ul>
+
+<h3>TTS Performance & Intel</h3>
+<p><b>Trend & multiple:</b> HT performance fluctuates on TTS (−14% MoM), while BTMH sees a gradual increase over time (+10% MoM), peaking since Jul. Jewelry multiple has reduced MoM as TTS closes the gap quickly — from 8.0x in Jun to 2.0x in Aug and 1.6x in Sep, the same trend across both sellers. The multiple is worse for BTMH (1.0x in Sep, −0.6pp MoM), while HT is 3.4x (+0.4pp).</p>
+<p style="margin-top:4px"><b>Intel — TTS voucher:</b></p>
+<ul>
+  <li>BTMH: 22% CAP 500K MBS 1500K (non-VIP), 20% CAP 800K MBS 800K (VIP)</li>
+  <li>HT: 17% CAP 270K MBS 600K (non-VIP), 20% CAP 800K MBS 800K (VIP), 22% CAP 800K MBS 1500K (flash-sale voucher, 8h)</li>
+  <li>Kim Phú Thái: 15% CAP 40K MBS 150K</li>
+  <li>TVMV: 25% CAP 1500K MBS 0K</li>
+</ul>
+<div class="tbl left"><table>
+  <thead><tr><th>Seller</th><th>TTS VIP</th><th>TTS non-VIP</th></tr></thead>
+  <tbody>
+    <tr><td>BTMH</td><td>20% CAP 800K MBS 800K</td><td>22% CAP 500K MBS 1500K</td></tr>
+    <tr><td>HT</td><td>—</td><td>—</td></tr>
+    <tr><td>Kim Phú Thái</td><td>—</td><td>—</td></tr>
+  </tbody>
+</table></div>
+<p style="margin-top:10px"><b>Seller commitment:</b></p>
+<ul>
+  <li>BTMH: will spend the same amount on Fine Jewelry ads as in August ($2,173). As of 23 Sep, it had spent $1,075 and plans to spend about $1.1K more from 24–30 Sep.</li>
+  <li>HT: will spend more on ads from 25 Sep. Spending on 25 Sep will be higher than on 15 Sep; daily spending from 26–30 Sep will be higher than on BAU days before 25 Sep.</li>
+</ul>
+</div>
+
+<div class="group">
+<h2>2. Next steps & Support needed</h2>
+<h3>Saving Gold</h3>
+<ul>
+  <li>Voucher 10% discussion w/ c. Hương</li>
+  <li>Doji & Kim Phú Thái discussion</li>
+</ul>
+<h3 style="margin-top:4px">Gold Jewelry</h3>
+<ul>
+  <li><span class="pri p0">P0</span>Jewelry voucher revision from 25 Sep — monitor performance</li>
+  <li><span class="pri p0">P0</span>Monitor seller commitment on increased ads spending</li>
+  <li><span class="pri p1">P1</span>High Jewelry txn fee understanding</li>
+</ul>
+</div>
+
+<div class="group">
+<h2>[Internal] Detailed action & Follow up</h2>
+<div class="tbl left"><table>
+  <thead><tr><th>Key areas</th><th>Description</th><th>Next action</th><th>Main PIC</th><th>Follow PIC</th><th>Start date</th><th>End date</th><th>Status action</th><th>Status update to high level</th></tr></thead>
+  <tbody id="tracker_tbl"></tbody>
+</table></div>
+</div>
+
+<div class="group">
+<h2>Appendix <span style="font-weight:400;color:var(--ink-3);font-size:13px">— TBU</span></h2>
+<div class="stat-grid">
+  <div class="appendix">Appendix – Table 1: Total Gold categories performance</div>
+  <div class="appendix">Appendix – Table 2: Saving Gold performance</div>
+  <div class="appendix">Appendix – Table 3: Gold Jewelry performance</div>
+  <div class="appendix">Appendix – Table 4 & 5: Gold Jewelry performance — by each seller</div>
+</div>
+</div>
+
+</section>
+
+<div class="foot" id="report_foot"></div>
+</div>
+
+<script id="data" type="application/json">{"updated_to":"2026-09-28","cur_label":"Sep","base_label":"Jul","days":28,"kpi":{"total":{"cur":{"orders":944.93,"gmv":74805.25,"nmv":44749.14,"cogs":52968.39,"pc2":-1718.43,"pc2_pct":-3.24,"g2n":59.82,"days":28},"bases":{"Jul":{"orders":1102.07,"gmv":91251.71,"nmv":32709.54,"cogs":46392.21,"pc2":-6456.07,"pc2_pct":-13.92,"g2n":35.85,"days":28},"Aug":{"orders":825.57,"gmv":65159.32,"nmv":29784.89,"cogs":38473.46,"pc2":-2639.71,"pc2_pct":-6.86,"g2n":45.71,"days":28}}},"sg":{"cur":{"orders":757.89,"gmv":53835.32,"nmv":35129.68,"cogs":41193.07,"pc2":-1827.57,"pc2_pct":-4.44,"g2n":65.25,"days":28},"bases":{"Jul":{"orders":706.64,"gmv":51338.11,"nmv":18940.93,"cogs":27563.46,"pc2":-4241.21,"pc2_pct":-15.39,"g2n":36.89,"days":28},"Aug":{"orders":571.57,"gmv":39800.82,"nmv":19752.29,"cogs":25646.71,"pc2":-2287.07,"pc2_pct":-8.92,"g2n":49.63,"days":28}}},"jw":{"cur":{"orders":187.39,"gmv":20969.93,"nmv":9619.39,"cogs":11775.36,"pc2":109.11,"pc2_pct":0.93,"g2n":45.87,"days":28},"bases":{"Jul":{"orders":395.79,"gmv":39913.71,"nmv":13768.75,"cogs":18828.71,"pc2":-2214.79,"pc2_pct":-11.76,"g2n":34.5,"days":28},"Aug":{"orders":254.39,"gmv":25358.43,"nmv":10032.57,"cogs":12826.68,"pc2":-352.5,"pc2_pct":-2.75,"g2n":39.56,"days":28}}},"btmh":{"cur":{"orders":346.57,"gmv":26549.14,"nmv":16601.89,"cogs":19968.68,"pc2":-893.75,"pc2_pct":-4.48,"g2n":62.53,"days":28},"bases":{"Jul":{"orders":228.14,"gmv":23973.32,"nmv":8361.32,"cogs":11423.86,"pc2":-1216.64,"pc2_pct":-10.65,"g2n":34.88,"days":28},"Aug":{"orders":291.89,"gmv":24977.68,"nmv":12271.25,"cogs":15086.4,"pc2":-682.89,"pc2_pct":-4.53,"g2n":49.13,"days":28}}},"ht":{"cur":{"orders":598.36,"gmv":48256.07,"nmv":28147.32,"cogs":33154.46,"pc2":-824.75,"pc2_pct":-2.49,"g2n":58.33,"days":28},"bases":{"Jul":{"orders":873.93,"gmv":67278.39,"nmv":24348.25,"cogs":34988.09,"pc2":-5239.46,"pc2_pct":-14.97,"g2n":36.19,"days":28},"Aug":{"orders":533.68,"gmv":40181.71,"nmv":17513.64,"cogs":23321.5,"pc2":-1956.86,"pc2_pct":-8.39,"g2n":43.59,"days":28}}},"btmh_sg":{"cur":{"orders":266.36,"gmv":16175.54,"nmv":11784.46,"cogs":14092.91,"pc2":-904.32,"pc2_pct":-6.42,"g2n":72.85,"days":28},"bases":{"Jul":{"orders":19.86,"gmv":1791.79,"nmv":200.29,"cogs":370,"pc2":-32.14,"pc2_pct":-8.69,"g2n":11.18,"days":28},"Aug":{"orders":170.96,"gmv":11157.82,"nmv":6746,"cogs":11122.48,"pc2":-454.54,"pc2_pct":-4.09,"g2n":60.46,"days":28}}},"btmh_jw":{"cur":{"orders":80.36,"gmv":10373.64,"nmv":4817.46,"cogs":5921.42,"pc2":10.57,"pc2_pct":0.18,"g2n":46.44,"days":28},"bases":{"Jul":{"orders":208.57,"gmv":22181.46,"nmv":8161.14,"cogs":11136.38,"pc2":-1184.5,"pc2_pct":-10.64,"g2n":36.79,"days":28},"Aug":{"orders":121.07,"gmv":13819.64,"nmv":5525.14,"cogs":7119.19,"pc2":-228.36,"pc2_pct":-3.21,"g2n":39.98,"days":28}}},"ht_sg":{"cur":{"orders":491.64,"gmv":37659.79,"nmv":23345.25,"cogs":27163.8,"pc2":-923.25,"pc2_pct":-3.4,"g2n":61.99,"days":28},"bases":{"Jul":{"orders":686.86,"gmv":49546.29,"nmv":18740.61,"cogs":27274.98,"pc2":-4209.07,"pc2_pct":-15.43,"g2n":37.82,"days":28},"Aug":{"orders":400.68,"gmv":28643.11,"nmv":13006.32,"cogs":17699.79,"pc2":-1832.54,"pc2_pct":-10.35,"g2n":45.41,"days":28}}},"ht_jw":{"cur":{"orders":107.14,"gmv":10596.29,"nmv":4801.89,"cogs":5998.7,"pc2":98.5,"pc2_pct":1.64,"g2n":45.32,"days":28},"bases":{"Jul":{"orders":187.39,"gmv":17732.18,"nmv":5607.54,"cogs":7677.78,"pc2":-1030.39,"pc2_pct":-13.42,"g2n":31.62,"days":28},"Aug":{"orders":133.36,"gmv":11538.68,"nmv":4507.36,"cogs":5761.55,"pc2":-124.32,"pc2_pct":-2.16,"g2n":39.06,"days":28}}}},"daytype":{"total":{"double":{"bases":{"Jul":{"orders":4188,"gmv":328258,"nmv":142319,"cogs":203527,"pc2":-29698,"pc2_pct":-14.59,"g2n":43.36,"days":1},"Aug":{"orders":1177,"gmv":114117,"nmv":33410,"cogs":41514,"pc2":-294,"pc2_pct":-0.71,"g2n":29.28,"days":1}},"cur":{"orders":3409,"gmv":281157,"nmv":164930,"cogs":197186,"pc2":-6243,"pc2_pct":-3.17,"g2n":58.66,"days":1},"dates_by":{"Jul":["7/7"],"Aug":["8/8"]},"cur_dates":["9/9"]},"mini":{"bases":{"Jul":{"orders":2922.67,"gmv":231791,"nmv":97202.33,"cogs":139392.33,"pc2":-21291.33,"pc2_pct":-15.27,"g2n":41.94,"days":3},"Aug":{"orders":1822.33,"gmv":147421.67,"nmv":72221.33,"cogs":92864.33,"pc2":-6331.67,"pc2_pct":-6.82,"g2n":48.99,"days":3}},"cur":{"orders":1750.67,"gmv":135982.67,"nmv":81668.33,"cogs":98985.67,"pc2":-3465.33,"pc2_pct":-3.5,"g2n":60.06,"days":3},"dates_by":{"Jul":["1/7","15/7","25/7"],"Aug":["1/8","15/8","25/8"]},"cur_dates":["1/9","15/9","25/9"]},"loyalty":{"bases":{"Jul":{"orders":2765,"gmv":246577.5,"nmv":84798.5,"cogs":119797,"pc2":-16587.5,"pc2_pct":-13.85,"g2n":34.39,"days":2},"Aug":{"orders":1049,"gmv":84494,"nmv":37976,"cogs":45258.5,"pc2":-2473.5,"pc2_pct":-5.47,"g2n":44.95,"days":2}},"cur":{"orders":2032,"gmv":167034.5,"nmv":107137,"cogs":123776.5,"pc2":-7701,"pc2_pct":-6.22,"g2n":64.14,"days":2},"dates_by":{"Jul":["10/7","20/7"],"Aug":["10/8","20/8"]},"cur_dates":["10/9","20/9"]},"bau":{"bases":{"Jul":{"orders":562.36,"gmv":47193.73,"nmv":14197.45,"cogs":19894.73,"pc2":-2455.59,"pc2_pct":-12.34,"g2n":30.08,"days":22},"Aug":{"orders":653.36,"gmv":49958.68,"nmv":23088.68,"cogs":30301.5,"pc2":-2258,"pc2_pct":-7.45,"g2n":46.22,"days":22}},"cur":{"orders":624.23,"gmv":48698.77,"nmv":28580.32,"cogs":33700.86,"pc2":-730.68,"pc2_pct":-2.17,"g2n":58.69,"days":22},"dates_by":{"Jul":[],"Aug":[]},"cur_dates":[]}},"sg":{"double":{"bases":{"Jul":{"orders":2626,"gmv":179356,"nmv":83253,"cogs":121031,"pc2":-18695,"pc2_pct":-15.45,"g2n":46.42,"days":1},"Aug":{"orders":636,"gmv":57030,"nmv":14884,"cogs":18903,"pc2":-898,"pc2_pct":-4.75,"g2n":26.1,"days":1}},"cur":{"orders":2597,"gmv":186446,"nmv":114946,"cogs":135078,"pc2":-5556,"pc2_pct":-4.11,"g2n":61.65,"days":1},"dates_by":{"Jul":["7/7"],"Aug":["8/8"]},"cur_dates":["9/9"]},"mini":{"bases":{"Jul":{"orders":1983.33,"gmv":138451,"nmv":59369.67,"cogs":86705.33,"pc2":-14294.33,"pc2_pct":-16.49,"g2n":42.88,"days":3},"Aug":{"orders":1234,"gmv":88758,"nmv":46430.67,"cogs":58649.67,"pc2":-4064,"pc2_pct":-6.93,"g2n":52.31,"days":3}},"cur":{"orders":1351.33,"gmv":95812,"nmv":62496.33,"cogs":74929.33,"pc2":-3094,"pc2_pct":-4.13,"g2n":65.23,"days":3},"dates_by":{"Jul":["1/7","15/7","25/7"],"Aug":["1/8","15/8","25/8"]},"cur_dates":["1/9","15/9","25/9"]},"loyalty":{"bases":{"Jul":{"orders":1906,"gmv":144575,"nmv":48862.5,"cogs":70679.5,"pc2":-10473.5,"pc2_pct":-14.82,"g2n":33.8,"days":2},"Aug":{"orders":804.5,"gmv":59690.5,"nmv":28412.5,"cogs":34017,"pc2":-2849.5,"pc2_pct":-8.38,"g2n":47.6,"days":2}},"cur":{"orders":1816,"gmv":142627.5,"nmv":96321,"cogs":110542,"pc2":-7671,"pc2_pct":-6.94,"g2n":67.53,"days":2},"dates_by":{"Jul":["10/7","20/7"],"Aug":["10/8","20/8"]},"cur_dates":["10/9","20/9"]},"bau":{"bases":{"Jul":{"orders":336.27,"gmv":25164,"nmv":7784.5,"cogs":11330.5,"pc2":-1646.77,"pc2_pct":-14.53,"g2n":30.94,"days":22},"Aug":{"orders":457.14,"gmv":30533.55,"nmv":15548.32,"cogs":20691.91,"pc2":-2056.77,"pc2_pct":-9.94,"g2n":50.92,"days":22}},"cur":{"orders":497.18,"gmv":34011.45,"nmv":22207,"cogs":26020.73,"pc2":-954.18,"pc2_pct":-3.67,"g2n":65.29,"days":22},"dates_by":{"Jul":[],"Aug":[]},"cur_dates":[]}},"jw":{"double":{"bases":{"Jul":{"orders":1562,"gmv":148901,"nmv":59065,"cogs":82496,"pc2":-11002,"pc2_pct":-13.34,"g2n":39.67,"days":1},"Aug":{"orders":542,"gmv":57087,"nmv":18526,"cogs":22611,"pc2":604,"pc2_pct":2.67,"g2n":32.45,"days":1}},"cur":{"orders":812,"gmv":94711,"nmv":49984,"cogs":62108,"pc2":-686,"pc2_pct":-1.1,"g2n":52.78,"days":1},"dates_by":{"Jul":["7/7"],"Aug":["8/8"]},"cur_dates":["9/9"]},"mini":{"bases":{"Jul":{"orders":939.67,"gmv":93340.67,"nmv":37833,"cogs":52687,"pc2":-6996.67,"pc2_pct":-13.28,"g2n":40.53,"days":3},"Aug":{"orders":588.33,"gmv":58664,"nmv":25790.67,"cogs":34215,"pc2":-2267.33,"pc2_pct":-6.63,"g2n":43.96,"days":3}},"cur":{"orders":399.67,"gmv":40170,"nmv":19172.33,"cogs":24056.33,"pc2":-371.67,"pc2_pct":-1.54,"g2n":47.73,"days":3},"dates_by":{"Jul":["1/7","15/7","25/7"],"Aug":["1/8","15/8","25/8"]},"cur_dates":["1/9","15/9","25/9"]},"loyalty":{"bases":{"Jul":{"orders":860,"gmv":102003,"nmv":35936.5,"cogs":49118,"pc2":-6114,"pc2_pct":-12.45,"g2n":35.23,"days":2},"Aug":{"orders":245,"gmv":24803.5,"nmv":9563.5,"cogs":11241.5,"pc2":376,"pc2_pct":3.34,"g2n":38.56,"days":2}},"cur":{"orders":216.5,"gmv":24406.5,"nmv":10816,"cogs":13234,"pc2":-30,"pc2_pct":-0.23,"g2n":44.32,"days":2},"dates_by":{"Jul":["10/7","20/7"],"Aug":["10/8","20/8"]},"cur_dates":["10/9","20/9"]},"bau":{"bases":{"Jul":{"orders":226.41,"gmv":22029.77,"nmv":6413.09,"cogs":8564.14,"pc2":-808.82,"pc2_pct":-9.44,"g2n":29.11,"days":22},"Aug":{"orders":196.64,"gmv":19425,"nmv":7540.32,"cogs":9609.45,"pc2":-201.09,"pc2_pct":-2.09,"g2n":38.82,"days":22}},"cur":{"orders":127.41,"gmv":14687.45,"nmv":6373.18,"cogs":7680.23,"pc2":223.45,"pc2_pct":2.91,"g2n":43.39,"days":22},"dates_by":{"Jul":[],"Aug":[]},"cur_dates":[]}}},"wow":{"weeks":[{"week":"2026-06-29","label":"29 Jun","bau_days":4,"partial":true,"total":{"orders":542,"gmv":48727.5,"nmv":16112,"cogs":22640.5,"pc2":-2957.25,"pc2_pct":-13.06,"g2n":33.07,"days":4},"sg":{"orders":255,"gmv":18983.5,"nmv":6051,"cogs":8667.5,"pc2":-1252.25,"pc2_pct":-14.45,"g2n":31.88,"days":4},"jw":{"orders":287.25,"gmv":29744.25,"nmv":10061.25,"cogs":13973,"pc2":-1704.75,"pc2_pct":-12.2,"g2n":33.83,"days":4}},{"week":"2026-07-06","label":"6 Jul","bau_days":5,"partial":false,"total":{"orders":550.6,"gmv":49742,"nmv":12845.4,"cogs":18137.6,"pc2":-2374.8,"pc2_pct":-13.09,"g2n":25.82,"days":5},"sg":{"orders":322.6,"gmv":27252,"nmv":7063.8,"cogs":10304,"pc2":-1546.4,"pc2_pct":-15.01,"g2n":25.92,"days":5},"jw":{"orders":228.6,"gmv":22490.2,"nmv":5781.6,"cogs":7833.4,"pc2":-828.4,"pc2_pct":-10.58,"g2n":25.71,"days":5}},{"week":"2026-07-13","label":"13 Jul","bau_days":6,"partial":false,"total":{"orders":567,"gmv":47276.17,"nmv":12764,"cogs":17497,"pc2":-1898.17,"pc2_pct":-10.85,"g2n":27,"days":6},"sg":{"orders":340.83,"gmv":25740.17,"nmv":7033.83,"cogs":9989.83,"pc2":-1285,"pc2_pct":-12.86,"g2n":27.33,"days":6},"jw":{"orders":226.33,"gmv":21536.17,"nmv":5730.5,"cogs":7507,"pc2":-613.33,"pc2_pct":-8.17,"g2n":26.61,"days":6}},{"week":"2026-07-20","label":"20 Jul","bau_days":5,"partial":false,"total":{"orders":654.8,"gmv":49769.8,"nmv":16842.2,"cogs":23957,"pc2":-3141.8,"pc2_pct":-13.11,"g2n":33.84,"days":5},"sg":{"orders":452.4,"gmv":30958.4,"nmv":11472.6,"cogs":17102.8,"pc2":-2700.8,"pc2_pct":-15.79,"g2n":37.06,"days":5},"jw":{"orders":202.8,"gmv":18811.2,"nmv":5369.8,"cogs":6854.2,"pc2":-441,"pc2_pct":-6.43,"g2n":28.55,"days":5}},{"week":"2026-07-27","label":"27 Jul","bau_days":6,"partial":false,"total":{"orders":488.5,"gmv":34005.83,"nmv":13610,"cogs":18879.67,"pc2":-1881.5,"pc2_pct":-9.97,"g2n":40.02,"days":6},"sg":{"orders":329.5,"gmv":20138.67,"nmv":8730,"cogs":12532.67,"pc2":-1530.17,"pc2_pct":-12.21,"g2n":43.35,"days":6},"jw":{"orders":159.33,"gmv":13866.67,"nmv":4879.83,"cogs":6347,"pc2":-351.17,"pc2_pct":-5.53,"g2n":35.19,"days":6}},{"week":"2026-08-03","label":"3 Aug","bau_days":6,"partial":false,"total":{"orders":1135.5,"gmv":78192.5,"nmv":38030.17,"cogs":54822.67,"pc2":-6721.5,"pc2_pct":-12.26,"g2n":48.64,"days":6},"sg":{"orders":829.17,"gmv":51189.67,"nmv":26818.83,"cogs":39505.67,"pc2":-5562.83,"pc2_pct":-14.08,"g2n":52.39,"days":6},"jw":{"orders":306.5,"gmv":27002.5,"nmv":11211.33,"cogs":15317,"pc2":-1158.5,"pc2_pct":-7.56,"g2n":41.52,"days":6}},{"week":"2026-08-10","label":"10 Aug","bau_days":5,"partial":false,"total":{"orders":329.2,"gmv":27997.8,"nmv":10613.8,"cogs":12697.2,"pc2":12.8,"pc2_pct":0.1,"g2n":37.91,"days":5},"sg":{"orders":193,"gmv":15264.2,"nmv":6012.6,"cogs":7350.6,"pc2":-329.4,"pc2_pct":-4.48,"g2n":39.39,"days":5},"jw":{"orders":136.8,"gmv":12733.8,"nmv":4601.2,"cogs":5346.6,"pc2":342.2,"pc2_pct":6.4,"g2n":36.13,"days":5}},{"week":"2026-08-17","label":"17 Aug","bau_days":6,"partial":false,"total":{"orders":503.33,"gmv":42767.67,"nmv":19066.33,"cogs":22583,"pc2":-363.83,"pc2_pct":-1.61,"g2n":44.58,"days":6},"sg":{"orders":331.33,"gmv":23378,"nmv":11899,"cogs":13957.5,"pc2":-553.67,"pc2_pct":-3.97,"g2n":50.9,"days":6},"jw":{"orders":172.67,"gmv":19389.17,"nmv":7167.33,"cogs":8625.5,"pc2":189.83,"pc2_pct":2.2,"g2n":36.97,"days":6}},{"week":"2026-08-24","label":"24 Aug","bau_days":6,"partial":false,"total":{"orders":607.83,"gmv":48309.67,"nmv":24753.33,"cogs":30185,"pc2":-1261,"pc2_pct":-4.18,"g2n":51.24,"days":6},"sg":{"orders":463.67,"gmv":32015,"nmv":18362.83,"cogs":22150.67,"pc2":-1216.17,"pc2_pct":-5.49,"g2n":57.36,"days":6},"jw":{"orders":144.33,"gmv":16294.67,"nmv":6390.33,"cogs":8034,"pc2":-44.33,"pc2_pct":-0.55,"g2n":39.22,"days":6}},{"week":"2026-08-31","label":"31 Aug","bau_days":6,"partial":false,"total":{"orders":566.17,"gmv":45471.83,"nmv":25461,"cogs":30084,"pc2":-842,"pc2_pct":-2.8,"g2n":55.99,"days":6},"sg":{"orders":457.5,"gmv":32995.83,"nmv":20554.17,"cogs":24087.5,"pc2":-992.5,"pc2_pct":-4.12,"g2n":62.29,"days":6},"jw":{"orders":108.67,"gmv":12476,"nmv":4907,"cogs":5996.67,"pc2":150.5,"pc2_pct":2.51,"g2n":39.33,"days":6}},{"week":"2026-09-07","label":"7 Sep","bau_days":5,"partial":false,"total":{"orders":598.8,"gmv":46890.6,"nmv":27142,"cogs":32128.4,"pc2":-992.4,"pc2_pct":-3.09,"g2n":57.88,"days":5},"sg":{"orders":481.8,"gmv":32672.2,"nmv":20985.2,"cogs":24732.2,"pc2":-1207.8,"pc2_pct":-4.88,"g2n":64.23,"days":5},"jw":{"orders":117.8,"gmv":14218.4,"nmv":6156.8,"cogs":7396.2,"pc2":215,"pc2_pct":2.91,"g2n":43.3,"days":5}},{"week":"2026-09-14","label":"14 Sep","bau_days":5,"partial":false,"total":{"orders":602.4,"gmv":47124.8,"nmv":27852.6,"cogs":32645.2,"pc2":-381.2,"pc2_pct":-1.17,"g2n":59.1,"days":5},"sg":{"orders":482,"gmv":32998.2,"nmv":21494.8,"cogs":25085.4,"pc2":-709.6,"pc2_pct":-2.83,"g2n":65.14,"days":5},"jw":{"orders":120.8,"gmv":14127,"nmv":6357.6,"cogs":7560.2,"pc2":328.4,"pc2_pct":4.34,"g2n":45,"days":5}},{"week":"2026-09-21","label":"21 Sep","bau_days":6,"partial":false,"total":{"orders":610.33,"gmv":47346.83,"nmv":28090.17,"cogs":33113.17,"pc2":-518.5,"pc2_pct":-1.57,"g2n":59.33,"days":6},"sg":{"orders":464,"gmv":30729.67,"nmv":20590.67,"cogs":24044,"pc2":-715.33,"pc2_pct":-2.98,"g2n":67.01,"days":6},"jw":{"orders":146.67,"gmv":16617.33,"nmv":7499.83,"cogs":9069.5,"pc2":196.67,"pc2_pct":2.17,"g2n":45.13,"days":6}},{"week":"2026-09-28","label":"28 Sep","bau_days":1,"partial":true,"total":{"orders":1062,"gmv":73862,"nmv":54402,"cogs":64962,"pc2":-1234,"pc2_pct":-1.9,"g2n":73.65,"days":1},"sg":{"orders":869,"gmv":54139,"nmv":43129,"cogs":51078,"pc2":-1586,"pc2_pct":-3.11,"g2n":79.66,"days":1},"jw":{"orders":193,"gmv":19723,"nmv":11273,"cogs":13884,"pc2":352,"pc2_pct":2.54,"g2n":57.16,"days":1}}]},"notes":{"by_base":{"Jul":{"headline":"GMV/day is down 18.0% vs Jul ($74.8K vs $91.3K) but NMV/day is up 36.8% ($44.7K vs $32.7K), and PC2 improved from −13.9% to −3.2% of Net COGS — the 8/8 fee change is still driving most of the gain.","product":"Saving gold grew both orders (+7.3%) and GMV (+4.9%) while PC2% improved 11.0pp to −4.4%. Jewelry volume is down 52.7% on orders and 47.5% on GMV, but PC2% flipped from −11.8% to +0.9% — now slightly profitable.","brand":"BTMH grew orders 51.9% and GMV 10.7%, improving PC2% 6.2pp to −4.5%. HT still carries the larger share of gold orders (598 vs BTMH's 347/day) but its orders and GMV are down (−31.5%/−28.3%) vs Jul, even as PC2% improved the most, from −15.0% to −2.5%.","daytype":"BAU orders are up 11.0% (562→624/day) and BAU PC2% jumped from −12.3% to −2.2%. A double day is now 5.5x a BAU day, down from 7.4x in Jul, so the base carries more of the volume. Jewelry lost the most on loyalty days (−74.8%) and mini-spike days (−57.5%) vs Jul."},"Aug":{"headline":"Versus Aug, GMV/day is up 14.8% and NMV/day is up 50.3%, and PC2 improved from −6.9% to −3.2% of Net COGS — a smaller swing than the Jul comparison, since Aug's own window already includes most of the post-8/8 period.","product":"Saving gold grew both orders (+32.6%) and GMV (+35.3%) while PC2% improved 4.5pp to −4.4%. Jewelry orders fell 26.3% and GMV fell 17.3%, though PC2% still improved 3.7pp to +0.9%.","brand":"BTMH grew orders 18.7% and GMV 6.3%, with PC2% roughly flat (−4.5% vs −4.5%) — BTMH's new saving-gold line had already ramped by Aug, so most of its improvement is baked into this baseline. HT grew orders 12.1% and GMV 20.1%, and improved PC2% 5.9pp to −2.5%, still the larger driver of the Sep gain.","daytype":"BAU orders are down 4.5% (653→624/day) vs Aug but BAU PC2% still improved 5.3pp to −2.2%. A double day is now 5.5x a BAU day — far above the 1.8x seen on Aug's own double day (8/8), which landed right on the fee-change transition and was unusually muted."},"Projection":{"headline":"Total gold ADG is running at ~50% of the Sep GMV projection, with PC2% (−3.2%) already better than the −3.4% proposal — driven by Saving Gold, which is also at ~50% of its GMV projection and beating its −5.8% PC2 proposal (−4.4% actual). Jewelry is at ~54% of its GMV projection but PC2% (+0.9%) is short of the +2.6% proposal.","product":"Saving Gold: ~50% of GMV projection, PC2% better than proposal (−4.4% vs −5.8%). Jewelry: ~54% of GMV projection, PC2% worse than proposal (+0.9% vs +2.6%).","brand":"Brand-level projection targets still don't exist in the sheet — confirmed again this refresh by checking the \"Performance (Before vs After)\" tab directly: its Projection column shows the identical Total Gold figure (e.g. 1,549 orders/day) copied into the BTMH, HT and Total columns for every metric, so there's no distinct BTMH or HT target to compare against. That tab does have real, distinct Before-vs-Current actuals by brand, though: BTMH's GMV/day moved from ~$87.4K (before, 1 Jul–7 Aug) to ~$64.8K (current, since 8 Aug), HT from ~$65.4K to ~$38.8K. Note the tab's own \"Total\" column for these actuals has a formula bug — it duplicates BTMH's numbers instead of summing both brands — so read the true total as BTMH+HT, not the sheet's own Total column. See the brand split under Table 1 in this Report tab for the full breakdown, with a link to double-check.","daytype":"There's no day-level projection target in the sheet, so this section keeps comparing Sep against the last selected historical base (Jul or Aug) rather than the projection."}},"wow":"Saving gold BAU PC2% moved from around −13% to −15% through Jun/early Jul, crossed to near breakeven in the week of 10 Aug (right after the 8/8 fee change), and has held between about −3% and −5% since, ending the week of 21 Sep at −3.0% (the first day of the new week starting 28 Sep read −3.1%, but that's just 1 day so far). Jewelry BAU orders fell from ~230–290/day pre-fee-change to roughly 110–170/day since Aug, but PC2% there has stayed mostly positive since 10 Aug too, closing the week of 21 Sep at +2.2% (28 Sep's single day read +2.5%).","voucher":"Since the 25 Sep voucher change (now 3 BAU days of data, up from 2), Jewelry BAU orders/GMV/NMV per day are all up vs the prior 19-day period (orders +32.0%, GMV +22.9%, NMV +58.4%), but PC2% has slipped to 1.1% from 3.4% for Jewelry total — roughly flat for BTMH (2.6% → 3.0%) but HT swung negative (4.1% → −0.8%). Still only 3 BAU days of data, so treat this as an early read, not a stable trend."},"voucher":{"periods":[{"start":"2026-07-01","end":"2026-08-07","label":"1 Jul – 7 Aug","days":31},{"start":"2026-08-08","end":"2026-08-21","label":"8 – 21 Aug","days":10},{"start":"2026-08-22","end":"2026-08-31","label":"22 – 31 Aug","days":9},{"start":"2026-09-01","end":"2026-09-24","label":"1 – 24 Sep","days":19},{"start":"2026-09-25","end":"2026-09-28","label":"25 – 28 Sep","days":3}],"entities":{"jw":{"orders":[237,130,169,122,161],"gmv":[22172,12516,19788,14242,17508],"nmv":[7192,4571,7623,5908,9358],"pc2":[-855,385,-69,238,128],"pc2_pct":[-8.8,7.3,-0.7,3.4,1.1]},"btmh_jw":{"orders":[109,61,64,51,65],"gmv":[11556,7493,8444,6705,9334],"nmv":[3852,2606,3480,2861,4828],"pc2":[-384,195,-77,89,172],"pc2_pct":[-7.4,6.4,-1.8,2.6,3.0]},"ht_jw":{"orders":[128,69,105,71,96],"gmv":[10616,5023,11344,7537,8173],"nmv":[3340,1965,4143,3048,4531],"pc2":[-471,191,8,150,-45],"pc2_pct":[-10.5,8.5,0.2,4.1,-0.8]}}},"base_options":["Jul","Aug","Projection"],"projection":{"total":{"gmv_pct":50,"pc2_proposal":-3.4},"sg":{"gmv_pct":50,"pc2_proposal":-5.8},"jw":{"gmv_pct":54,"pc2_proposal":2.6}},"priceCheck":{"source":"Jewelry – BAU Price Check sheet","saving_gold":{"BTMH":{"website":1425000,"shp_final":1480280,"tts_final":0,"check_date":"2026-09-29"},"HT":{"website":1442000,"shp_final":1464971,"tts_final":1592360,"check_date":"2026-09-28"}},"gold_jewelry":{"top3_shp":{"n":11,"shp_before":3,"tts_before":4,"equal_before":4,"shp_after":9,"tts_after":2,"equal_after":0},"top3_tts":{"n":12,"shp_before":4,"tts_before":4,"equal_before":4,"shp_after":11,"tts_after":1,"equal_after":0},"check_dates":{"BTMH":"2026-09-25","HT":"2026-09-25","KPT":"2026-09-23","TVMV":"2026-09-23"}},"doji_note":"Vs. gold market price (Doji — 1,440K/chỉ, as of 24/9) — BTMH: SHP checkout price is uncompetitive by ~101K. HT: SHP checkout price is uncompetitive by 44K. <span style=\"color:var(--ink-3)\">(No live source in the Price Check sheet for Doji — manual entry, update each refresh.)</span>"},"sources":{"daily_tracking":{"label":"Daily Tracking [BI data]","url":"https://docs.google.com/spreadsheets/d/1uWJBv_Nx23H5Q0QUTOTZQhPGBpId3sO76jdxVocxHn4/edit#gid=2089934476","data_as_of":"2026-09-28","pulled_on":"2026-10-01"},"performance_before_after":{"label":"Performance (Before vs After)","url":"https://docs.google.com/spreadsheets/d/1uWJBv_Nx23H5Q0QUTOTZQhPGBpId3sO76jdxVocxHn4/edit#gid=0","data_as_of":"2026-09-27","pulled_on":"2026-09-29"},"price_check_sg":{"label":"Price Check — Saving Gold","url":"https://docs.google.com/spreadsheets/d/1mK_RPmKxWsr-r1H2VeF6DJRhQcWqRglyUskjI-ekPxo/edit#gid=0","data_as_of":"latest per brand: BTMH 29 Sep, HT 28 Sep","pulled_on":"2026-09-29"},"price_check_jw":{"label":"Price Check — Fine Jewelry","url":"https://docs.google.com/spreadsheets/d/1mK_RPmKxWsr-r1H2VeF6DJRhQcWqRglyUskjI-ekPxo/edit#gid=1353627755","data_as_of":"latest per brand: BTMH/HT 25 Sep, KPT/TVMV 23 Sep","pulled_on":"2026-09-29"}},"performanceByBrand":{"note":"From the \"Performance (Before vs After)\" tab. Its own \"Total\" column duplicates BTMH's numbers instead of summing both brands (a formula/reference bug) — true totals shown here are computed as BTMH+HT independently. Projection targets in that tab are NOT brand-specific (same Total-Gold-level number copied into every brand column) — only Before/Current actuals are usable at brand level.","before_period":"1 Jul – 7 Aug","current_period":"8 Aug – now","btmh":{"total":{"before":{"orders":1096,"gmv":87428,"nmv":33576,"cogs":47697,"g2n":38.4},"cur":{"orders":804,"gmv":64820,"nmv":35139,"cogs":41874,"g2n":54.2}},"sg":{"before":{"orders":718,"gmv":50215,"nmv":20221,"cogs":29435,"g2n":40.3},"cur":{"orders":613,"gmv":44045,"nmv":26297,"cogs":31063,"g2n":59.7}},"jw":{"before":{"orders":378,"gmv":37214,"nmv":13354,"cogs":18261,"g2n":35.9},"cur":{"orders":191,"gmv":20775,"nmv":8841,"cogs":10811,"g2n":42.6}}},"ht":{"total":{"before":{"orders":887,"gmv":65415,"nmv":25633,"cogs":36828,"g2n":39.2},"cur":{"orders":472,"gmv":38795,"nmv":20081,"cogs":23808,"g2n":51.8}},"sg":{"before":{"orders":702,"gmv":48729,"nmv":20050,"cogs":29197,"g2n":41.1},"cur":{"orders":367,"gmv":28661,"nmv":15810,"cogs":18574,"g2n":55.2}},"jw":{"before":{"orders":185,"gmv":16686,"nmv":5583,"cogs":7631,"g2n":33.5},"cur":{"orders":105,"gmv":10134,"nmv":4271,"cogs":5234,"g2n":42.1}}}}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const DATA=JSON.parse(document.getElementById('data').textContent);
+let B=DATA.base_label;
+let dtBase=DATA.base_options?(DATA.base_options.find(o=>o!=='Projection')||DATA.base_label):DATA.base_label;
+const C=DATA.cur_label, N=DATA.days;
+const $=id=>document.getElementById(id);
+const DTN={double:'Double day',mini:'Mini spike',loyalty:'Loyalty',bau:'BAU'};
+const DTD={double:'day = month, e.g. 7.7, 9.9',mini:'1st, 15th, 25th',loyalty:'10th, 20th',bau:'all other days'};
+
+// ---- formatting ----
+const usd=v=>{const a=Math.abs(v),s=v<0?'−':'';return a>=1000?s+'$'+(a/1000).toFixed(1)+'k':s+'$'+Math.round(a);};
+const int=v=>Math.round(v).toLocaleString('en-US');
+const pct=v=>(v<0?'−':'')+Math.abs(v).toFixed(1)+'%';
+const MET={
+  orders:{label:'Orders',fmt:int,tick:v=>v.toLocaleString('en-US')},
+  gmv:{label:'GMV',fmt:usd,tick:v=>usd(v)},
+  nmv:{label:'NMV',fmt:usd,tick:v=>usd(v)},
+  pc2_pct:{label:'PC2 % Net COGS',fmt:pct,tick:v=>v+'%',isPct:true},
+  g2n:{label:'G2N (NMV % GMV)',fmt:pct,tick:v=>v+'%',isPct:true},
+};
+function chg(a,b,isPct){
+  if(a==null||b==null) return '';
+  if(isPct){const d=b-a;return `<b class="${d>=0?'up':'down'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}pp</b>`;}
+  if(!a) return '';
+  const d=(b-a)/Math.abs(a)*100;return `<b class="${d>=0?'up':'down'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(0)}%</b>`;
+}
+
+// ---- text ----
+function relabel(){
+  const isProj=B==='Projection';
+  $('eyebrow').textContent=`SHOBAFA · Gold category · days 1–${N}, daily averages`;
+  $('title').textContent=`Saving Gold & Jewelry: ${C} vs ${B}`;
+  const srcDT=(DATA.sources||{}).daily_tracking;
+  const srcLink=srcDT?` <a href="${srcDT.url}" target="_blank" rel="noopener">Open sheet</a> · data as of ${srcDT.data_as_of} · pulled ${srcDT.pulled_on}.`:'';
+  $('foot').innerHTML=`Source: [SHOBAFA Internal] Gold & Jewelry Post-Approval PFM tracking, "Daily Tracking [BI data]" tab, data updated to ${DATA.updated_to}. All figures are daily averages in USD for days 1–${N} of ${C}${isProj?' vs Sep projection/proposal targets (entered manually — not tracked in the sheet; the By day type and Week on week sections below still compare against '+dtBase+' actuals, since projection has no daily breakdown)':' vs the same days of '+B}. PC2 % = PC2 ÷ Net COGS. Day types: double day (${DTD.double}), mini spike (${DTD.mini}), loyalty (${DTD.loyalty}), BAU (${DTD.bau}). Weeks run Monday to Sunday.${srcLink}`;
+  $('lg_base').textContent=`${dtBase} 1–${N}`; $('lg_cur').textContent=`${C} 1–${N}`;
+  $('th_b').textContent=dtBase+' avg/day'; $('th_c').textContent=C+' avg/day';
+  $('th_mb').textContent=dtBase+' vs BAU'; $('th_mc').textContent=C+' vs BAU';
+}
+function renderNotes(){
+  const nb=(DATA.notes&&DATA.notes.by_base)?DATA.notes.by_base[B]:null;
+  ['headline','product','brand','daytype'].forEach(k=>$('n_'+k).textContent=(nb&&nb[k])||(DATA.notes||{})[k]||'');
+  ['wow','voucher'].forEach(k=>$('n_'+k).textContent=(DATA.notes||{})[k]||'');
+}
+renderNotes();
+relabel();
+
+// ---- KPI cards ----
+function cards(id,ent){
+  const k=DATA.kpi[ent], c=k.cur;
+  if(B==='Projection'){
+    const p=(DATA.projection||{})[ent];
+    if(!p){
+      $(id).innerHTML=`<div class="kpi"><span class="l">Projection</span><span class="v">—</span><span class="d">No projection target on file for this line.</span></div>`;
+      return;
+    }
+    const verdict=c.pc2_pct>p.pc2_proposal?'better than proposal':(c.pc2_pct<p.pc2_proposal?'worse than proposal':'in line with proposal');
+    const verdictCls=c.pc2_pct>p.pc2_proposal?'up':(c.pc2_pct<p.pc2_proposal?'down':'');
+    const items=[
+      ['ADO',int(c.orders),'','no target on file'],
+      ['GMV / day',usd(c.gmv),`<b class="${p.gmv_pct>=100?'up':''}">${p.gmv_pct}%</b>`,'of Sep projection'],
+      ['NMV / day',usd(c.nmv),'','no target on file'],
+      ['Net COGS / day',usd(c.cogs),'','no target on file'],
+      ['PC2 % Net COGS',pct(c.pc2_pct),`<b class="${verdictCls}">${verdict}</b>`,`${pct(p.pc2_proposal)} proposal`],
+      ['G2N (NMV % GMV)',pct(c.g2n),'','no target on file'],
+    ];
+    $(id).innerHTML=items.map(([l,v,d,p2])=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="d">${d?d+' ':''}${p2}</span></div>`).join('');
+    return;
+  }
+  const b=k.bases[B];
+  const items=[['ADO',int(c.orders),chg(b.orders,c.orders),int(b.orders)],
+    ['GMV / day',usd(c.gmv),chg(b.gmv,c.gmv),usd(b.gmv)],
+    ['NMV / day',usd(c.nmv),chg(b.nmv,c.nmv),usd(b.nmv)],
+    ['Net COGS / day',usd(c.cogs),chg(b.cogs,c.cogs),usd(b.cogs)],
+    ['PC2 % Net COGS',pct(c.pc2_pct),chg(b.pc2_pct,c.pc2_pct,true),pct(b.pc2_pct)],
+    ['G2N (NMV % GMV)',pct(c.g2n),chg(b.g2n,c.g2n,true),pct(b.g2n)]];
+  $(id).innerHTML=items.map(([l,v,d,p])=>`<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="d">${d} vs ${p} in ${B}</span></div>`).join('');
+}
+function renderCards(){
+  cards('k_total','total');cards('k_sg','sg');cards('k_jw','jw');cards('k_btmh','btmh');cards('k_ht','ht');
+}
+renderCards();
+
+// ---- toggles ----
+const state={dtSeg:'total',dtMet:'orders',wowMet:'orders',vouEnt:'jw',base:DATA.base_label,view:'dashboard'};
+function seg(id,opts,key,cb){
+  const el=$(id);
+  el.innerHTML=opts.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${state[key]===v}">${l}</button>`).join('');
+  el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;state[key]=b.dataset.v;
+    el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));cb();});
+}
+const METOPTS=[['orders','Orders'],['gmv','GMV'],['nmv','NMV'],['pc2_pct','PC2 %'],['g2n','G2N']];
+seg('dt_seg',[['total','Total'],['sg','Saving gold'],['jw','Jewelry']],'dtSeg',()=>drawDT());
+seg('dt_met',METOPTS,'dtMet',()=>drawDT());
+seg('wow_met',METOPTS,'wowMet',()=>drawWOW());
+seg('vou_seg',[['jw','Jewelry total'],['btmh_jw','BTMH'],['ht_jw','HT']],'vouEnt',()=>drawVOU());
+seg('base_seg',(DATA.base_options||[DATA.base_label]).map(l=>[l,l]),'base',()=>{B=state.base;if(B!=='Projection') dtBase=B;relabel();renderCards();renderNotes();drawDT();});
+seg('view_seg',[['dashboard','Dashboard'],['report','Report']],'view',()=>{
+  $('tab_dashboard').hidden=state.view!=='dashboard';
+  $('tab_report').hidden=state.view!=='report';
+  if(state.view==='dashboard'){ if(cDT) cDT.resize(); if(cWOW) cWOW.resize(); }
+});
+
+// ---- report tab: MTD tracker table (static, entered from the report text) ----
+const TRACKER=[
+  {area:'Report',desc:'To follow pfm of all high ABS jewelry, not only BTMH, HT; then can compare the trend to assess performance',next:'Update List seller high ABS jewelry &gt;$50<br>Break pfm incl HT/BTMH and excl',main:'Việt',follow:'Dương',start:'09/22/2026',end:'22/9/2026',status:'Done',hl:''},
+  {area:'Report',desc:'Revamp template report',next:'Revamp template report',main:'Dương',follow:'',start:'09/22/2026',end:'22/9/2026',status:'Done',hl:''},
+  {area:'Report',desc:'Weekly TTS VC & pricing check to compare w/ SHP',next:'Template pricing check',main:'Việt',follow:'',start:'09/23/2026',end:'',status:'Done',hl:''},
+  {area:'Slide Visit brand',desc:'Meeting with Doji - 29 Sep slide preparation',next:'Agenda:<br>1. Review PFM YTD 2026<br>2. Proposal from SHP: saving gold + Fine Jewelry',main:'1. Kim Oanh<br>2. Thùy Dương',follow:'Việt &amp; Thương',start:'09/21/2026',end:'',status:'In progress',hl:''},
+  {area:'Jewery VC',desc:'Finalize VC upscheme for Jewelry in BAU/campaign',next:'Work With BI for projection<br>Sync with CP to have the final plan',main:'Dương',follow:'Thương',start:'09/17/2026',end:'09/23/2026',status:'Done',hl:'Done'},
+  {area:'Jewery VC',desc:'SHP increased VC CIR, while sellers\' expenses remained relatively stable.',next:'Discuss with HT/BTMH to increase Ads budget to align with SHP\'s investment',main:'Việt',follow:'',start:'',end:'',status:'Done',hl:'Done'},
+  {area:'Meeting',desc:'Update pfm for high level',next:'Prepare content for Meeting w/ c MH next friday',main:'Dương',follow:'Việt<br>Thương<br>c Thoa',start:'09/28/2026',end:'10/01/2026',status:'',hl:''},
+];
+function statusBadge(s){
+  if(!s) return '—';
+  const cls=s.toLowerCase()==='done'?'done':(s.toLowerCase()==='in progress'?'progress':'');
+  return `<span class="status ${cls}">${s}</span>`;
+}
+function renderTracker(){
+  $('tracker_tbl').innerHTML=TRACKER.map(r=>`<tr><td>${r.area}</td><td>${r.desc}</td><td>${r.next}</td><td>${r.main}</td><td>${r.follow||'—'}</td><td>${r.start||'—'}</td><td>${r.end||'—'}</td><td>${statusBadge(r.status)}</td><td>${statusBadge(r.hl)}</td></tr>`).join('');
+}
+renderTracker();
+
+// ---- report tab: Table 1/2/3 computed live from the same DATA.kpi the Dashboard tab uses ----
+function fmtChgAdg(a,b){
+  if(a==null||b==null||!a) return '—';
+  const d=(b-a)/Math.abs(a)*100;
+  return (d>=0?'+':'−')+Math.abs(d).toFixed(0)+'%';
+}
+function fmtChgPP(a,b){
+  if(a==null||b==null) return '—';
+  const d=b-a;
+  return (d>=0?'+':'−')+Math.abs(d).toFixed(1)+'pp';
+}
+function projText(ent){
+  const p=(DATA.projection||{})[ent]; if(!p) return 'No projection figure on file for this line.';
+  const cur=DATA.kpi[ent].cur;
+  const verdict=cur.pc2_pct>p.pc2_proposal?'better than proposal':(cur.pc2_pct<p.pc2_proposal?'worse than proposal':'in line with proposal');
+  return `ADG achieves ~${p.gmv_pct}% of Sep projection, while PC2 is ${verdict} (${pct(cur.pc2_pct)} vs. ${pct(p.pc2_proposal)} proposal)`;
+}
+function renderReportTable(id,ent){
+  const k=DATA.kpi[ent], cur=k.cur, jul=k.bases.Jul, aug=k.bases.Aug;
+  const cards=[
+    [`MTD (Sep 1–${N}, daily avg)`,`ADG ${usd(cur.gmv)} · PC2 ${pct(cur.pc2_pct)} of Net COGS · G2N ${pct(cur.g2n)}`],
+    [`vs same period last month (Aug 1–${N})`,`ADG ${fmtChgAdg(aug.gmv,cur.gmv)} · PC2 ${fmtChgPP(aug.pc2_pct,cur.pc2_pct)} · G2N ${fmtChgPP(aug.g2n,cur.g2n)}`],
+    [`vs same period in Jul 1–${N} (pre-fee adjustment)`,`ADG ${fmtChgAdg(jul.gmv,cur.gmv)} · PC2 ${fmtChgPP(jul.pc2_pct,cur.pc2_pct)} · G2N ${fmtChgPP(jul.g2n,cur.g2n)}`],
+    ['vs projection',projText(ent)],
+  ];
+  $(id).innerHTML=cards.map(([l,v])=>`<div class="stat-card"><span class="l">${l}</span><span class="v">${v}</span></div>`).join('');
+}
+function renderReportSummary(){
+  const sg=DATA.kpi.sg, jw=DATA.kpi.jw;
+  const sgProj=(DATA.projection||{}).sg||{}, jwProj=(DATA.projection||{}).jw||{};
+  $('report_title').textContent=`Gold Performance Report — MTD to ${DATA.updated_to}`;
+  $('report_summary').textContent=`Both Saving Gold and Jewelry MTD only achieve ~${sgProj.gmv_pct||'–'}%/~${jwProj.gmv_pct||'–'}% of GMV projection respectively. Saving Gold shows good signals in ADG (${fmtChgAdg(sg.bases.Aug.gmv,sg.cur.gmv)} MoM, ${fmtChgAdg(sg.bases.Jul.gmv,sg.cur.gmv)} vs Jul) and PC2 (${sgProj.pc2_proposal!=null&&sg.cur.pc2_pct>sgProj.pc2_proposal?'better than':'worse than'} projection), while Jewelry is under expectation on both topline (${fmtChgAdg(jw.bases.Aug.gmv,jw.cur.gmv)} MoM) and PC2. G2N has also improved for both gold types (Saving Gold ${fmtChgPP(sg.bases.Aug.g2n,sg.cur.g2n)}, Jewelry ${fmtChgPP(jw.bases.Aug.g2n,jw.cur.g2n)} vs Aug), thanks to a more stable PRM, which lifts NMV.`;
+  const S=DATA.sources||{};
+  const srcLine=(s)=>s?`<a href="${s.url}" target="_blank" rel="noopener">${s.label}</a> (as of ${s.data_as_of}, pulled ${s.pulled_on})`:'';
+  const srcList=[srcLine(S.daily_tracking),srcLine(S.performance_before_after),srcLine(S.price_check_sg),srcLine(S.price_check_jw)].filter(Boolean).join(' · ');
+  $('report_foot').innerHTML=`Table 1–3 figures are calculated live from the same DATA.kpi used by the Dashboard tab (Sep 1–${N} vs Jul 1–${N} vs Aug 1–${N} daily averages, data updated to ${DATA.updated_to}) — they will always match the Dashboard tab. Projection/proposal targets are entered manually (DATA.projection) since they aren't tracked in the sheet. All other report content (assortment, pricing, TTS intel, next steps, tracker) is entered as text and does not auto-update.<br>Sources: ${srcList}.`;
+}
+renderReportSummary();
+renderReportTable('table1_stats','total');
+renderReportTable('table2_stats','sg');
+renderReportTable('table3_stats','jw');
+
+// ---- report tab: brand split (Before vs Current), computed live from DATA.performanceByBrand (extracted from the "Performance (Before vs After)" tab) ----
+function renderBrandPerf(){
+  const pb=DATA.performanceByBrand; const el=$('brand_perf'); if(!el) return;
+  if(!pb||!pb.btmh||!pb.ht){ el.innerHTML='<li>No brand-split data on file.</li>'; return; }
+  function line(label,seg){
+    const b=pb.btmh[seg], h=pb.ht[seg];
+    if(!b||!h) return '';
+    return `<li><b>${label}</b> — BTMH: GMV/day ${usd(b.before.gmv)} → ${usd(b.cur.gmv)} (${chg(b.before.gmv,b.cur.gmv)}), PC2 % n/a in this tab, G2N ${pct(b.before.g2n)} → ${pct(b.cur.g2n)}. HT: GMV/day ${usd(h.before.gmv)} → ${usd(h.cur.gmv)} (${chg(h.before.gmv,h.cur.gmv)}), G2N ${pct(h.before.g2n)} → ${pct(h.cur.g2n)}.</li>`;
+  }
+  const src=(DATA.sources||{}).performance_before_after;
+  const srcLine=src?`<li style="color:var(--ink-3);font-size:12px">${pb.note} Before = ${pb.before_period}, Current = ${pb.current_period}. <a href="${src.url}" target="_blank" rel="noopener">Open sheet</a> · data as of ${src.data_as_of} · pulled ${src.pulled_on}.</li>`:'';
+  el.innerHTML = line('Total Gold','total') + line('Saving Gold','sg') + line('Gold Jewelry','jw') + srcLine;
+}
+renderBrandPerf();
+
+// ---- report tab: Price competitiveness, computed live from DATA.priceCheck (extracted from the "Jewelry – BAU Price Check" sheet) ----
+function fmtK(n){ return Math.round(Math.abs(n)/1000).toLocaleString('en-US')+'K'; }
+function fmtDShort(iso){ if(!iso) return ''; const d=new Date(iso+'T00:00:00'); return d.getDate()+'/'+(d.getMonth()+1); }
+function renderPriceCheckSG(){
+  const pc=DATA.priceCheck; const el=$('pc_sg'); if(!el) return;
+  if(!pc||!pc.saving_gold){ el.innerHTML='<li>No price-check data on file.</li>'; return; }
+  const sg=pc.saving_gold, lines=[];
+  const websiteParts=[];
+  ['BTMH','HT'].forEach(b=>{
+    const d=sg[b]; if(!d||d.website==null||d.shp_final==null) return;
+    const delta=d.shp_final-d.website;
+    const verdict=delta>0?'uncompetitive':(delta<0?'competitive':'in line');
+    websiteParts.push(`${b} (as of ${fmtDShort(d.check_date)}): SHP checkout price is ${verdict}${delta?' by ~'+fmtK(delta):''}`);
+  });
+  if(websiteParts.length) lines.push(`Vs. website — ${websiteParts.join('. ')}.`);
+  const ttsParts=[];
+  ['BTMH','HT'].forEach(b=>{
+    const d=sg[b]; if(!d||!d.tts_final) return;
+    const delta=d.shp_final-d.tts_final;
+    const verdict=delta<0?'competitive':(delta>0?'uncompetitive':'in line');
+    ttsParts.push(`${b} (as of ${fmtDShort(d.check_date)}): SHP checkout price is ${verdict}${delta?' by ~'+fmtK(delta):''}`);
+  });
+  if(ttsParts.length) lines.push(`Vs. TTS — ${ttsParts.join('. ')}.`);
+  if(pc.doji_note) lines.push(pc.doji_note);
+  const src=(DATA.sources||{}).price_check_sg;
+  if(src) lines.push(`<span style="color:var(--ink-3);font-size:12px"><a href="${src.url}" target="_blank" rel="noopener">Open sheet</a> · ${src.data_as_of} · pulled ${src.pulled_on}</span>`);
+  el.innerHTML=lines.map(l=>`<li>${l}</li>`).join('');
+}
+function renderPriceCheckJW(){
+  const pc=DATA.priceCheck; const el=$('pc_jw'); if(!el) return;
+  if(!pc||!pc.gold_jewelry){ el.innerHTML='<li>No price-check data on file.</li>'; return; }
+  const gj=pc.gold_jewelry;
+  const cd=gj.check_dates||{};
+  const dateNote=Object.entries(cd).map(([b,d])=>`${b} ${fmtDShort(d)}`).join(', ');
+  function line(label,t){
+    if(!t||!t.n) return `<li><b>${label}</b> — no data on file.</li>`;
+    const pc1=v=>t.n?Math.round(v/t.n*100):0;
+    return `<li><b>${label}</b> (${t.n} SKUs) — before platform vouchers: SHP had lower prices for ${t.shp_before}/${t.n} (${pc1(t.shp_before)}%), TTS for ${t.tts_before}/${t.n} (${pc1(t.tts_before)}%), ${t.equal_before} tied. After platform vouchers: SHP had lower prices for ${t.shp_after}/${t.n} (${pc1(t.shp_after)}%), TTS for ${t.tts_after}/${t.n} (${pc1(t.tts_after)}%), ${t.equal_after} tied.</li>`;
+  }
+  const src=(DATA.sources||{}).price_check_jw;
+  const srcHtml=src?` <a href="${src.url}" target="_blank" rel="noopener">Open sheet</a> · pulled ${src.pulled_on}.`:'';
+  el.innerHTML = line('Top 3 SHP',gj.top3_shp) + line('Top 3 TTS',gj.top3_tts)
+    + (dateNote?`<li style="color:var(--ink-3);font-size:12px">Latest check per brand: ${dateNote}.${srcHtml}</li>`:'');
+}
+renderPriceCheckSG();
+renderPriceCheckJW();
+
+// ---- charts ----
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+const tip=()=>({backgroundColor:css('--surface'),titleColor:css('--ink'),bodyColor:css('--ink-2'),borderColor:css('--line'),borderWidth:1,padding:10,boxPadding:4,usePointStyle:true});
+let cDT=null,cWOW=null;
+function drawDT(){
+  const d=DATA.daytype[state.dtSeg], m=MET[state.dtMet], types=['double','mini','loyalty','bau'];
+  const bv=types.map(t=>d[t].bases[dtBase]?d[t].bases[dtBase][state.dtMet]:null), cv=types.map(t=>d[t].cur?d[t].cur[state.dtMet]:null);
+  if(cDT) cDT.destroy();
+  cDT=new Chart($('c_dt'),{type:'bar',data:{labels:types.map(t=>DTN[t]),datasets:[
+    {label:`${dtBase} 1–${N}`,data:bv,backgroundColor:css('--prior'),borderRadius:4,borderSkipped:m.isPct?false:'start'},
+    {label:`${C} 1–${N}`,data:cv,backgroundColor:css('--cur'),borderRadius:4,borderSkipped:m.isPct?false:'start'}]},
+    options:{maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tip(),callbacks:{label:c=>`${c.dataset.label}: ${m.fmt(c.raw)}`,
+      afterBody:it=>{const t=types[it[0].dataIndex];if(t==='bau'||m.isPct)return '';const base=it[0].datasetIndex?d.bau.cur:d.bau.bases[dtBase];return base?`${(it[0].raw/base[state.dtMet]).toFixed(1)}x a BAU day`:'';}}}},
+      scales:{x:{grid:{display:false}},y:{beginAtZero:true,border:{display:false},ticks:{callback:m.tick}}}}});
+  // table
+  $('dt_tbl').innerHTML=types.map(t=>{
+    const b=d[t].bases[dtBase], c=d[t].cur; const bv=b?b[state.dtMet]:null, cv=c?c[state.dtMet]:null;
+    const dates=t==='bau'?'':`<span class="dates">${[...(d[t].dates_by[dtBase]||[]),...d[t].cur_dates].join(', ')}</span>`;
+    const mb=(!m.isPct&&t!=='bau'&&b&&d.bau.bases[dtBase])?`<span class="mult">${(bv/d.bau.bases[dtBase][state.dtMet]).toFixed(1)}x</span>`:(t==='bau'&&!m.isPct?'<span class="mult">1.0x</span>':'—');
+    const mc=(!m.isPct&&t!=='bau'&&c&&d.bau.cur)?`<span class="mult">${(cv/d.bau.cur[state.dtMet]).toFixed(1)}x</span>`:(t==='bau'&&!m.isPct?'<span class="mult">1.0x</span>':'—');
+    return `<tr><td>${DTN[t]}${dates}</td><td>${b?b.days:0} / ${c?c.days:0}</td><td>${bv==null?'—':m.fmt(bv)}</td><td>${cv==null?'—':m.fmt(cv)}</td><td>${chg(bv,cv,m.isPct)}</td><td>${mb}</td><td>${mc}</td></tr>`;
+  }).join('');
+}
+function drawWOW(){
+  const W=DATA.wow.weeks, m=MET[state.wowMet];
+  const feeIdx=W.findIndex(w=>{const s=new Date(w.week+'T00:00:00'),e=new Date(s);e.setDate(s.getDate()+6);const f=new Date('2026-08-08T00:00:00');return f>=s&&f<=e;});
+  const mk=(key,col)=>({label:key==='sg'?'Saving gold':'Jewelry',data:W.map(w=>w[key]?w[key][state.wowMet]:null),borderColor:css(col),backgroundColor:css(col),borderWidth:2,tension:.2,
+    pointRadius:W.map(w=>w.partial?4:3),pointHoverRadius:6,pointBackgroundColor:W.map(w=>w.partial?css('--surface'):css(col)),pointBorderColor:css(col),pointBorderWidth:2,spanGaps:true});
+  const feeLine={id:'fee',afterDatasetsDraw(ch){if(feeIdx<0)return;const x=ch.scales.x.getPixelForValue(feeIdx),{top,bottom}=ch.chartArea,ctx=ch.ctx;
+    ctx.save();ctx.strokeStyle=css('--ink-3');ctx.setLineDash([4,4]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,bottom);ctx.stroke();
+    ctx.setLineDash([]);ctx.fillStyle=css('--ink-3');ctx.font='11px "IBM Plex Sans", sans-serif';ctx.fillText('8/8 fee change',x+4,top+10);ctx.restore();}};
+  if(cWOW) cWOW.destroy();
+  cWOW=new Chart($('c_wow'),{type:'line',data:{labels:W.map(w=>w.label),datasets:[mk('sg','--sg'),mk('jw','--jw')]},plugins:[feeLine],
+    options:{maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{...tip(),callbacks:{title:it=>{const w=W[it[0].dataIndex];return `Week of ${w.label} · ${w.bau_days} BAU day${w.bau_days===1?'':'s'}${w.partial?' (partial week)':''}`;},label:c=>`${c.dataset.label}: ${c.raw==null?'—':m.fmt(c.raw)}`}}},
+      scales:{x:{grid:{display:false},title:{display:true,text:'Week starting (Monday)'}},y:{beginAtZero:!m.isPct,border:{display:false},ticks:{callback:m.tick}}}}});
+}
+function drawVOU(){
+  const V=DATA.voucher; if(!V) return;
+  const E=V.entities[state.vouEnt];
+  $('vou_tbl').innerHTML=V.periods.map((p,i)=>{
+    const isLast=i===V.periods.length-1;
+    const badge=isLast?` <span class="mult">NEW · ${p.days} day${p.days===1?'':'s'}</span>`:'';
+    const g2n=E.gmv[i]?E.nmv[i]/E.gmv[i]*100:0;
+    return `<tr class="${isLast?'hl':''}"><td>${p.label}${badge}</td><td>${p.days}</td><td>${int(E.orders[i])}</td><td>${usd(E.gmv[i])}</td><td>${usd(E.nmv[i])}</td><td>${pct(g2n)}</td><td>${usd(E.pc2[i])}</td><td>${pct(E.pc2_pct[i])}</td></tr>`;
+  }).join('');
+}
+function build(){
+  Chart.defaults.font.family='"IBM Plex Sans",system-ui,sans-serif';Chart.defaults.font.size=11;
+  Chart.defaults.color=css('--ink-2');Chart.defaults.borderColor=css('--grid');
+  drawDT();drawWOW();drawVOU();
+}
+function start(){ if(!window.Chart){setTimeout(start,50);return;} build(); }
+start();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',build);
+new MutationObserver(build).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+</script>
+
+
+</body></html>
